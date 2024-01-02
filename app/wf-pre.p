@@ -1,7 +1,7 @@
 def new shared var vapiconsultarproduto as log format "Ligado/Desligado".
 def new shared var p-supervisor as char.
 def new shared var pmoeda as char format "x(30)".
-def new global shared var vpromocod   as char. /* helio 09032022 - [ORQUESTRA 243179 - ESCOPO ADICIONAL] Seleção de moeda a vista na Pré-Venda  */
+def new global shared var vpromocod   as char. /* helio 09032022 - [ORQUESTRA 243179 - ESCOPO ADICIONAL] Seleï¿½ï¿½o de moeda a vista na Prï¿½-Venda  */
 vpromocod = "".
 
 def var rec-prevenda as recid.
@@ -267,7 +267,7 @@ def new shared var vvalor-chpu  like titulo.titvlcob.
 def var vnumero-chpu-aux as int format ">>>>>>>9".
 def var vdescper as dec format ">>9.99 %".
 def var vescd as char format "x(15)" extent 3
-                 init ["1. Valor     ", "2. Percentual", "3. Funcionário"].
+                 init ["1. Valor     ", "2. Percentual", "3. Funcionï¿½rio"].
 def var vtipo-desc as int.
 def var vusacartao as int.
 def var vqtdcel    as int.
@@ -505,7 +505,7 @@ repeat with centered row 3 side-label width 80 1 down
                     */
                 end.
                 else do:
-                    vmen-cre = "      PARABENS, SEU LIMITE É DE R$ " + 
+                    vmen-cre = "      PARABENS, SEU LIMITE ï¿½ DE R$ " + 
                             string(vlimcrd,">>,>>9.99").
                     run mens-credito.
                     vdiscre = yes.
@@ -707,8 +707,8 @@ repeat with centered row 3 side-label width 80 1 down
                         (input-output sresp,  
                         input     "          PRODUTO DESCONTINUADO.        "  + 
                         "                                        "  +     
-                        "    Só seguir com a venda se o mesmo    "  + 
-                        " estiver disponível no estoque na loja. "   + 
+                        "    Sï¿½ seguir com a venda se o mesmo    "  + 
+                        " estiver disponï¿½vel no estoque na loja. "   + 
                         "                                        "  + 
                         "                CONTINUAR ?             ", 
                         input "").          
@@ -846,7 +846,7 @@ repeat with centered row 3 side-label width 80 1 down
             def var vpedid_abe     like liped.lipqtd. 
             def var vestoq_fil     like estoq.estatual.
             
-            /* Projeto Rollout Móveis no Profimetrics
+            /* Projeto Rollout Mï¿½veis no Profimetrics
                nao vai ser implantada esta parte do projeto
             if avail estoq and estoq.estloc <> ""
             then do.                
@@ -946,7 +946,7 @@ repeat with centered row 3 side-label width 80 1 down
             if vprocod <> vult-p
             then do:
                 /************************************************************
-                  Solicita plano apenas para produto que não possui a palavra 
+                  Solicita plano apenas para produto que nï¿½o possui a palavra 
                    CHIP no nome.
                 ************************************************************/
                   
@@ -970,7 +970,7 @@ repeat with centered row 3 side-label width 80 1 down
                     run esc-pro.p (input vopecod, output vtipviv).
                     
                     disp skip
-                         vtipviv label "Serviço......." format ">>>9"
+                         vtipviv label "Serviï¿½o......." format ">>>9"
                          with frame f-plaviv.
                            
                     find promoviv where promoviv.opecod = vopecod 
@@ -978,7 +978,7 @@ repeat with centered row 3 side-label width 80 1 down
                                     no-lock no-error.
                     if not avail promoviv
                     then do:
-                        message "Serviço não encontrado.".
+                        message "Serviï¿½o nï¿½o encontrado.".
                         pause.
                         undo.
                     end.
@@ -987,7 +987,7 @@ repeat with centered row 3 side-label width 80 1 down
                          with frame f-plaviv.
                     pause 0.
 
-                    /* Se o Serviço selecionado NÃO é pré-pago */
+                    /* Se o Serviï¿½o selecionado Nï¿½O ï¿½ prï¿½-pago */
                     if promoviv.provivnom <> "PRE PAGO"
                     then do:
                         run esc-pla.p(input vtipviv, 
@@ -1026,7 +1026,7 @@ repeat with centered row 3 side-label width 80 1 down
                         end.
 
                         /**************************************************
-                            Valida se plano de telefonia é válido para
+                            Valida se plano de telefonia ï¿½ vï¿½lido para
                             a Filial
                          **************************************************/
                         
@@ -1230,56 +1230,6 @@ repeat with centered row 3 side-label width 80 1 down
                 
             end. /* if lastkey = keycode("A") */
              
-            if lastkey = keycode("d") or lastkey = keycode("D")
-            then do :
-                assign
-                    i-seeid = -1
-                    i-recid = -1
-                    i-seerec = ?.
-                {fbrowse.i
-                        &File = wf-movim
-                        &CField = produ.pronom
-                        &OField = "wf-movim.movqtm wf-movim.movpc"
-                        &Where = "true"
-                        &NonCharacter = /*
-                        &AftFnd = "find first produ where recid(produ) =
-                                    wf-movim.wrec no-lock."
-                        &AftSelect1 = "
-                            do:
-                                update wf-movim.movpc with frame f-desc.
-                                next keys-loop.
-                            end. "
-                        &Form = "frame f-desc"
-                }
-                vprotot = 0.
-                v-qtd = 0.
-                clear frame f-produ1 all.
-                vitem = 0.
-                for each wf-movim:
-                    vitem = vitem + 1.
-                    find produ where recid(produ) = wf-movim.wrec no-lock.
-                    display
-                        produ.procod format "999999999"
-                        produ.pronom
-                        wf-movim.movqtm
-                        wf-movim.precoori
-                        when wf-movim.precoori > wf-movim.movpc
-                        wf-movim.movpc
-                        (wf-movim.movqtm * wf-movim.movpc) @ vsubtotal
-                        with frame f-produ1.
-                    down with frame f-produ1.
-                    pause 0.
-                    vprotot = vprotot + (wf-movim.movqtm * wf-movim.movpc).
-                    v-qtd = v-qtd + wf-movim.movqtm.
-                end.
-                vpreco = wf-movim.movpc.
-                display vprotot
-                        vpreco
-                        with frame f-produ.
-                clear frame f-desc all.
-                hide frame f-desc no-pause.
-                next.
-            end.
 
             if lastkey = keycode("r") or lastkey = keycode("R")
             then do:
@@ -1819,7 +1769,7 @@ repeat with centered row 3 side-label width 80 1 down
                     wf-movim.vencod   = v-vencod
                     wf-movim.movpc    = vpreco.
 
-                if wf-movim.movqtm >= 1   /* 555859 - Duas Garantias em produtos iguais PRÉ VENDA */
+                if wf-movim.movqtm >= 1   /* 555859 - Duas Garantias em produtos iguais PRï¿½ VENDA */
                 then do:
                     parametro-in = "DESCONTO-ITEM=S|PRODUTO=" +
                                    string(produ.procod) + "|".
@@ -2488,7 +2438,7 @@ procedure p-atu-frame:
         vprotot = vprotot + (wf-movim.movqtm * wf-movim.movpc).
         v-qtd = v-qtd + wf-movim.movqtm.
         find first tt-seg-movim where tt-seg-movim.seg-procod = produ.procod no-error.
-        if not avail tt-seg-movim /* não faz para seguro */
+        if not avail tt-seg-movim /* nï¿½o faz para seguro */
            and produ.proipiper <> 98 /* Servico */
         then xprocod = produ.procod.
     end.
@@ -3649,7 +3599,7 @@ procedure p-tbprice-ccid:
                             no-lock no-error. /* #1 */
         if avail btbprice
         then do:
-            message "ICCID já cadastrado" view-as alert-box.
+            message "ICCID jï¿½ cadastrado" view-as alert-box.
             undo, retry.
         end.                  
         else do:
@@ -3989,10 +3939,10 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                         if avail tt-descfunc
                             and tt-descfunc.tem_cadastro = no
                         then do:
-                            message "CPF não cadastrado na base de Clientes, "
-                                    "faça o cadastro e entre em contato "
+                            message "CPF nï¿½o cadastrado na base de Clientes, "
+                                    "faï¿½a o cadastro e entre em contato "
                                     "com o RH para alterar o tipo "
-                                    "para Funcionário" view-as alert-box.
+                                    "para Funcionï¿½rio" view-as alert-box.
                             undo.
                         end.
 
@@ -4000,7 +3950,7 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                             and tt-descfunc.tem_cadastro = yes
                             and tt-descfunc.tipo_funcionario = no
                         then do:
-                            message "CPF não é de um funcionário."
+                            message "CPF nï¿½o ï¿½ de um funcionï¿½rio."
                                         view-as alert-box.
                             undo.
                         end.
