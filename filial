@@ -1,0 +1,21 @@
+#! /bin/bash
+clear
+
+cd /u/prevenda/work
+
+DATA_SUP=`date '+%Y%m%d%H%M'`
+
+stty intr ""
+
+
+$DLC/bin/mpro -pf /admcom/bases/wsdev.pf  -p /u/prevenda/app/inicio.p -param $1
+
+echo " "
+echo " "
+echo " "
+echo " TERMINAL DESCONECTADO - PRESSIONE QUALQUER TECLA PARA RETORNAR "
+echo " "
+echo "                 OU DESLIGUE O COMPUTADOR AGORA"
+read VAR
+
+stty intr ^C
