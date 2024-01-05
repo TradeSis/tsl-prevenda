@@ -145,9 +145,10 @@ procedure exclui-segprod.
             wf-movim.movqtm = wf-movim.movqtm - 1.  /* helio 101123 - 555859 - Duas Garantias em produtos iguais PRÉ VENDA */
             wf-movim.movpc  = wf-movim.movpc  - tt-seg-movim.movpc.
         if wf-movim.movqtm <= 0  /* helio 101123 - 555859 - Duas Garantias em produtos iguais PRÉ VENDA */
-        then delete wf-movim.
-
-        delete tt-seg-movim.
+        then do:
+            delete wf-movim.
+            delete tt-seg-movim.
+        end.
     end.
 
 /***
