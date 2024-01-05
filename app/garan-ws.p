@@ -37,7 +37,6 @@ vip = "".
 run lemestre.p (input "api-safe", output vip).     
 
 message "Consultando webservice P2K SAFE " vip.
-pause 1 .
 
 vwebservice = vip + "/ws-safe/optimus.asmx/ConsultaProdutoGarantia7C".
 
