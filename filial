@@ -6,9 +6,14 @@ cd /u/prevenda/work
 DATA_SUP=`date '+%Y%m%d%H%M'`
 
 stty intr ""
+DLC=/usr/dlc
+PROCFG=/admcom/progress-cliente.cfg
+export DLC PROCFG
 
 
-$DLC/bin/mpro -pf /admcom/bases/wsdev.pf  -p /u/prevenda/app/inicio.p -param $1
+export PROPATH="../app"
+
+mpro -pf /admcom/pf/bancos.pf  -p /u/prevenda/app/inicio.p -param $1
 
 echo " "
 echo " "
