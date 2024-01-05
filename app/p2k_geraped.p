@@ -13,6 +13,7 @@ def var vforma as int.
 
 def buffer bprevenprod for prevenprod.
 def buffer bprodu for produ.
+def buffer sprevenprod for prevenprod.
 
 def var vservico  as char.
 
@@ -241,7 +242,7 @@ for each prevenprod of prevenda where prevenprod.garantia = yes no-lock.
     find produ  where  produ.procod = prevenprod.procodProduto no-lock.
     find bprodu where bprodu.procod = prevenprod.procod        no-lock.
 
-    do vx = 1 to bprevenprod.movqtm:
+    do vx = 1 to prevenprod.movqtm:
         put unformatted
         5                   format "99"         /* Tipo_Reg */
         prevenda.etbcod        format "99999"      /* Codigo_Loja */
@@ -268,7 +269,7 @@ for each prevenprod of prevenda where prevenprod.garantia = yes no-lock.
         substr(prevenprod.p2k-datahoraprodu, 9, 6)
                             format "x(6)"       /* Hora Venda */
         prevenprod.p2k-datahoraplano  format "x(14)" /* WS */
-        vx       format "999999"    
+        bprevenprod.movseq       format "999999"    
         prevenprod.p2k-id_seguro format "9999999999" /* WS */
         skip.
     end.

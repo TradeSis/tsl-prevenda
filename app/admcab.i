@@ -120,7 +120,7 @@ then do:
     display wtitulo                with frame fc2.
 end.
 status input "Digite os dados ou pressione [F4] para encerrar.".
-status default "CUSTOM Business Solutions".
+status default "tradesis solucoes em sistemas".
 
 if search("F:\OPERADOR\SJERONIM.CHP") <> ?
 then put screen "LIGACAO INTERROMPIDA!" row 23 column 60 color blink/red.
