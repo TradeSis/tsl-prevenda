@@ -320,6 +320,12 @@ repeat:
             if esqcom1[esqpos1] = " Digita"
             then do:
                 
+                /* HELIO 08012023 - ID 61585 - Correção data de vigência chama doutor */
+                if ttcampos.idcampo = "proposta.dataInicioVigencia" or
+                   ttcampos.idcampo = "proposta.dataFimVigencia" or
+                   ttcampos.idcampo = "proposta.vigenciaPeriodoEmMeses"
+                then next.
+                                                
                 find first ttopcoes where ttopcoes.idPAI = ttcampos.id and
                                           ttopcoes.idcampo  = ttcampos.idcampo
                                           no-error.
