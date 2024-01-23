@@ -403,7 +403,7 @@ end.
 /* SCP PARA FILIAL */
 if vpastap2k-filial <> "" and vpastap2k-filial <> ?
 then do:
-    hide message no-pause. message "copiando pedido -> " vpastap2k-filial. pause.
+    hide message no-pause. message "copiando pedido -> " vpastap2k-filial. pause 1 no-message.
     os-command silent value("scp-pass " + varq + " " + vpastap2k-filial).
     os-command silent value("rm -f "  + varq).
     hide message no-pause.
