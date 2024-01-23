@@ -55,6 +55,10 @@ then do:
     par-valor = par-valor + string(setbcod,"9999") + "/".
     unix silent value("mkdir -p " + par-valor).
 end.
+if par-tipo = "pasta-p2k-filial" and par-valor <> ""
+then do:
+    par-valor = "filial" + string(setbcod) + ":" + par-valor + string(setbcod,"9999") + "/".
+end.
 if par-tipo = "pasta-relat"
 then do:
     par-valor = par-valor + string(setbcod,"9999") + "/".

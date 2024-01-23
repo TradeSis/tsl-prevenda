@@ -38,7 +38,10 @@ if prevenda.etbcod <> setbcod          /* somente pre-vendas da filial    */
 then return.
 
 def var vpastap2k as char.
+def var vpastap2k-filial as char.
 run lemestre.p ("pasta-p2k",output vpastap2k).
+run lemestre.p ("pasta-p2k-filial",output vpastap2k-filial).
+
 
 varq = vpastap2k + "/PD" + string(prevenda.etbcod,"9999") + string(prevenda.precod,"99999999") + ".csi".
 
@@ -396,6 +399,15 @@ do on error undo:
     prevenda.arquivo      = varq.
     prevenda.tipoped      = vtipoped.
 end. 
+
+/* SCP PARA FILIAL */
+if vpastap2k-filial <> "" and vpastap2k-filial <> ?
+then do:
+    hide message no-pause. message "copiando pedido -> " vpastap2k-filial. pause.
+    os-command silent value("scp-pass " + varq + " " + vpastap2k-filial).
+    os-command silent value("rm -f "  + varq).
+    hide message no-pause.
+end.
 
 release prevenda.
 
