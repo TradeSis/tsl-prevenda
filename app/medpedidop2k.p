@@ -1,4 +1,4 @@
-/* #01082022 - chama doutor não identificar cliente a vista */
+/* #01082022 - chama doutor nï¿½o identificar cliente a vista */
 /* medico na tela 042022 - helio */
 
 {admcab.i}
@@ -44,9 +44,10 @@ if
 then return.
 find clien where clien.clicod = prevenda.clicod and clien.clicod > 1 no-lock no-error.
 
- 
 def var vpastap2k as char.
+def var vpastap2k-filial as char.
 run lemestre.p ("pasta-p2k",output vpastap2k).
+run lemestre.p ("pasta-p2k-filial",output vpastap2k-filial).
 
 varq = vpastap2k + "/PD" + string(prevenda.etbcod,"9999") + string(prevenda.precod,"99999999") + ".csi".
 
@@ -177,5 +178,16 @@ put unformatted
     skip.
 
 output close.
+
+/* SCP PARA FILIAL */
+if vpastap2k-filial <> "" and vpastap2k-filial <> ?
+then do:
+    hide message no-pause. message "copando arquivo do pedido para servidor da filial". pause 1 no-message.
+    os-command silent value("scp-pass " + varq + " " + vpastap2k-filial).
+    os-command silent value("rm -f "  + varq).
+    hide message no-pause.
+end.
+
+
 
 
