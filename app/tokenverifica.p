@@ -1,6 +1,5 @@
-/* helio 30102023 - Novo modelo TOKEN regional lojas - Orquestra 538865 */
 def output param p-ok as log.
-def output param pidusuario as char.
+def var pidusuario as char.
 def var ptoken as char format "x(30)".
 
 

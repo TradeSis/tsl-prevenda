@@ -12,7 +12,7 @@ def output param rec-prevenda as recid.
 
 def shared var vcupomb2b as int format ">>>>>>>>>9". /* helio 31012023 - cupom b2b */
 def shared var vplanocota as int. /* helio 02082023 */
-def shared var p-supervisor as char.
+
 def shared var pmoeda as char format "x(30)".
 
 def new global shared var vpromocod   as char. /* helio 09032022 - [ORQUESTRA 243179 - ESCOPO ADICIONAL] Seleção de moeda a vista na Pré-Venda  */
@@ -143,7 +143,7 @@ do on error undo:
     prevenda.campanha               = par-campanha.
     prevenda.valorcupomdesconto     = par-valorcupomdesconto.
     prevenda.planocota              = vplanocota.
-    prevenda.supervisor             = p-supervisor.
+
     prevenda.pmoeda                 = pmoeda.
     prevenda.promocod               = vpromocod.
     
