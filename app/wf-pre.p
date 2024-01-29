@@ -1,5 +1,4 @@
 def new shared var vapiconsultarproduto as log format "Ligado/Desligado".
-def new shared var p-supervisor as char.
 def new shared var pmoeda as char format "x(30)".
 def new global shared var vpromocod   as char. /* helio 09032022 - [ORQUESTRA 243179 - ESCOPO ADICIONAL] Sele��o de moeda a vista na Pr�-Venda  */
 vpromocod = "".
@@ -104,7 +103,6 @@ def var vloop   as int.
       def var vbarramentolibera as log.
       def var vgerentelibera    as log.
       def var vsupervisorlibera as log.
-      def var p-libregional as log.
         def var vbarr-desc as dec.
     def var vagrupador as log.
     
@@ -420,7 +418,6 @@ repeat with centered row 3 side-label width 80 1 down
         no-box color message frame fcli:
 
     vapiconsultarproduto = YES. /* LIGADO */
-    p-supervisor = "".
     vpromocod = "".
     
     for each twf-movim: delete twf-movim. end. for each wf-imei. delete wf-imei. end.
@@ -1769,7 +1766,7 @@ repeat with centered row 3 side-label width 80 1 down
                     wf-movim.vencod   = v-vencod
                     wf-movim.movpc    = vpreco.
 
-                if wf-movim.movqtm >= 1   /* 555859 - Duas Garantias em produtos iguais PR� VENDA */
+                if wf-movim.movqtm = 1  
                 then do:
                     parametro-in = "DESCONTO-ITEM=S|PRODUTO=" +
                                    string(produ.procod) + "|".
@@ -3342,13 +3339,12 @@ end procedure.
 
 procedure p-descmed-barramento: 
 
+
 def input parameter p-procod as int.
 def input parameter p-valorProduto as dec.
 def input parameter p-valorDesconto as dec.
 def output parameter p-descontoMaximoPermitido as dec.
-def output parameter p-lib    as log.
-def output parameter p-libregional as log.
-
+def output  parameter p-lib    as log.
 
 for each ttconsultamargemdescontoEntrada. delete ttconsultamargemdescontoEntrada. end.
 for each ttmargemdescontoproduto. delete ttmargemdescontoproduto. end.
@@ -3360,16 +3356,15 @@ ttconsultamargemdescontoEntrada.valorProduto     = string(p-valorproduto).
 ttconsultamargemdescontoEntrada.valorDescontoSolicitado = string(p-valordesconto).
 ttconsultamargemdescontoEntrada.codigoOperador  = string(sfuncod).
 
-run apimargemdesconto.p.  /* nova api */
+run wc-consultamargemdesconto.p.
 
-p-libregional = no.
 p-lib = no.
 p-descontoMaximoPermitido = 0.
 for each ttmargemdescontoproduto where ttmargemdescontoproduto.codigoProduto = string(p-procod).
     p-descontoMaximoPermitido = dec(ttmargemdescontoproduto.valorMaximoPermitido).
     p-lib = ttmargemdescontoproduto.autorizaDesconto = "true".
-    p-libregional = ttmargemdescontoproduto.autorizaDescontoRegional = "true".
 end.
+
 
 
 end procedure.
@@ -4015,6 +4010,7 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                     hide frame f-escd no-pause.
     
                     /* fluxo de liberacao */
+                    /* fluxo de liberacao */
                     vsupervisorlibera = no.
                     vgerentelibera    = no.
                     vbarramentolibera = yes.
@@ -4034,9 +4030,7 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                                                input bwf-movim.precoori,
                                                input bwf-movim.precoori - bwf-movim.movpc, 
                                                output aux1,
-                                               output aux2,
-                                               output p-libregional).
-                         
+                                               output aux2).
                                                                                
                                 if aux2 =  no
                                 then do:
@@ -4056,8 +4050,7 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                                            input wf-movim.precoori,
                                            input wf-movim.precoori - wf-movim.movpc, 
                                            output vdescontoMaximoPermitido,
-                                           output vbarramentolibera,
-                                           output p-libregional).
+                                           output vbarramentolibera).
                             npreco_unitario = wf-movim.precoori - vdescontoMaximoPermitido.
                             npreco_total    = npreco_unitario * vqtd.
 
@@ -4065,43 +4058,20 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                         
                         if vbarramentolibera = no
                         then do:
-                            if p-libregional
-                            then do:
-                                vbarr-desc = 100 - ((npreco_unitario) / ppreco_unitario * 100). 
-                                disp 
-                                    "  Desconto Negado pela Politica de Descontos" skip(1) 
-                                    "  Sera necessario autorizacao de supervisor" skip(1)
-                                    "  Solicitado R$ " space(1)  ppreco_unitario - apreco_unitario perc-desc format "->>>9.99%" skip(1) 
-                                    "  Valor Maximo de desconto Permitido R$ " space(1) vdescontoMaximoPermitido 
-                                                vbarr-desc format "->>>9.99%" space(2) 
-                                    with frame favisobarramento 
-                                    centered no-labels
-                                    row 7 overlay
-                                    color messages.
-                            end.
-                            else do on endkey undo, retry :
-                                disp 
-                                    "    " skip(1)
-                                    "  Margem de Descontos Esgotada" skip(1) 
-                                    "    " skip(1)
-                                    with frame favisobarramento3 
-                                    centered no-labels
-                                    row 7 overlay
-                                    color messages.
-                                
-                                hide message no-pause.
-                                message "margem de desconto esgotada!".
-                                pause 2 no-message.
-                                if vagrupador
-                                then do: 
-                                    for each bwf-movim where bwf-movim.kitproagr = produ.procod. 
-                                        bwf-movim.movpc = bwf-movim.precoori.
-                                    end.
-                                end.
-                                else   wf-movim.movpc = wf-movim.precoori.
-                                return.
-                            end.
-                        end.
+
+
+                            vbarr-desc = 100 - ((npreco_unitario) / ppreco_unitario * 100). 
+                            disp 
+                                "  Desconto Negado pela Politica de Descontos" skip(1) 
+                                "  Sera necessario autorizacao de supervisor" skip(1)
+                                "  Solicitado R$ " space(1)  ppreco_unitario - apreco_unitario perc-desc format "->>>9.99%" skip(1) 
+                                "  Valor Maximo de desconto Permitido R$ " space(1) vdescontoMaximoPermitido 
+                                            vbarr-desc format "->>>9.99%" space(2) 
+                                with frame favisobarramento 
+                                centered no-labels
+                                row 7 overlay
+                                color messages.
+                        end .
                         else do:
                             disp 
                                 skip(1)
@@ -4122,11 +4092,12 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                         hide frame favisobarramento2 no-pause.
                         
                         if not vgerentelibera
-                        then do on error undo:
-                            do on endkey undo, retry :  /* helio 29122023 BUG desconto de gerentes - Pre venda */
-                                hide message no-pause.
-                                message "(12) desconto nao autorizado pelo gerente.".
-                                pause 1 no-message.
+                        then do on error undo:  
+                            do on endkey undo, retry :
+                            hide message no-pause.
+                            message "(12) desconto nao autorizado pelo gerente.".
+                                                        
+                                                        pause 1 no-message.
                             end.
                             if vagrupador
                             then do: 
@@ -4146,16 +4117,14 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                             if keyfunction(lastkey) <> "END-ERROR"
                             then do:
                                 message "(13) solicite token de supervisor" keyfunction(lastkey).
-                                
-                                run tokenverifica.p (output vsupervisorlibera, output p-supervisor). /* NOVO TOKEN */
-
+                                run psenauto.p (input produ.procod, output vsupervisorlibera).
                             end.
 
                             if not vsupervisorlibera
-                            then do on error undo:
+                            then do:
                                 do on endkey undo, retry.
-                                    message color messages "(12) desconto nao autorizado".
-                                    pause 1 no-message.
+                                message color messages "(12) desconto nao autorizado".
+                                pause 1 no-message.
                                 end.
                                 if vagrupador
                                 then do: 
@@ -4201,16 +4170,13 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                                 end.
                             end.
                         end.
-                   end.
-                        if vsupervisorlibera = no
-                        then p-supervisor = "".
-                        
+                    end.
+    
                         hide message no-pause.
                         message color normal
                             "(13) desconto permitido" string(vbarramentolibera,"politica=ok/politica=nao ok") 
                                                           string(vgerentelibera,"gerente=ok/") 
-                                                          string(vsupervisorlibera,"supervisor=ok/")
-                                                          p-supervisor.
+                                                          string(vsupervisorlibera,"supervisor=ok/").
                         pause 2 no-message.
                         
                         if vagrupador

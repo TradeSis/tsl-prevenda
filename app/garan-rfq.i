@@ -94,7 +94,7 @@ procedure inclusao-segprod.
             wf-movim.wrec      = recid(bprodu)
             wf-movim.movalicms = 98.
     end.
-    wf-movim.movqtm = wf-movim.movqtm + 1.  /* helio 101123 - 555859 - Duas Garantias em produtos iguais PRÉ VENDA */
+    wf-movim.movqtm = /*#1 wf-movim.movqtm + */ 1.
     wf-movim.movpc  = wf-movim.movpc + btt-segprodu.prvenda.
 
     /*
@@ -142,13 +142,12 @@ procedure exclui-segprod.
         find bprodu where bprodu.procod = tt-seg-movim.seg-procod no-lock.
         find first wf-movim where wf-movim.wrec = recid(bprodu).
         assign
-            wf-movim.movqtm = wf-movim.movqtm - 1.  /* helio 101123 - 555859 - Duas Garantias em produtos iguais PRÉ VENDA */
+            /*#1 wf-movim.movqtm = wf-movim.movqtm - 1. */
             wf-movim.movpc  = wf-movim.movpc  - tt-seg-movim.movpc.
-        if wf-movim.movqtm <= 0  /* helio 101123 - 555859 - Duas Garantias em produtos iguais PRÉ VENDA */
-        then do:
-            delete wf-movim.
-            delete tt-seg-movim.
-        end.
+        if /*#1 wf-movim.movqtm*/ wf-movim.movpc <= 0
+        then delete wf-movim.
+
+        delete tt-seg-movim.
     end.
 
 /***
