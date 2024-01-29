@@ -224,16 +224,12 @@ hide frame frame-a no-pause.
 procedure frame-a.
     find bseg-produ where bseg-produ.procod = tt-seg-movim.seg-procod no-lock.
     find produ of tt-seg-movim no-lock.
-    
-        find first wf-movim where wf-movim.wrec = recid(bseg-produ).
-
     display
         bseg-produ.procod  column-label "Seguro"
-        bseg-produ.pronom  format "x(23)" column-label "Descricao Seguro"
+        bseg-produ.pronom  format "x(25)" column-label "Descricao Seguro"
         tt-seg-movim.procod
-        produ.pronom       format "x(28)"
+        produ.pronom       format "x(30)"
         tt-seg-movim.movpc format ">>>9.99" column-label "Preco"
-        wf-movim.movqtm    column-label "Qtd" format ">9"    
         with frame frame-a 12 down width 80 color white/red row 5
                 title " Garantia Estendida / Roubo, Furto e Quebra " overlay.
 
