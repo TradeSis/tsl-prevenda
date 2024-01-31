@@ -60,7 +60,7 @@ input close.
 
 
 
-{/usr/admcom/prevenda/admcab.i new}
+{/usr/admcom/local/admcab.i new}
 
 def var vpathhml as char.
 
@@ -68,7 +68,7 @@ def var vhml as char format "x(78)" extent 5 initial
     ["1-Versao de Producao",
      "2-Homologacao Melhoria Venda Outra Loja",
      "3-Homologacao Melhoria Novo modelo TOKEN regional lojas - Orquestra 538865",
-     "4-Homologacao Melhoria 555859 - Duas Garantias em produtos iguais PRÉ VENDA",
+     "4-Homologacao Melhoria 555859 - Duas Garantias em produtos iguais PRE VENDA",
      "5-Homologacao Projeto Cadastro Rapido Na Pre-Venda"].
 
 disp vhml with frame fhml
@@ -79,16 +79,16 @@ if keyfunction(lastkey) = "end-error" then quit.
 
 vpathhml = "".
 if frame-index = 2 
-then vpathhml = "/usr/admcom/prevenda/hml/VENDAO/,".
+then vpathhml = "/usr/admcom/local/hml/VENDAO/,".
 if frame-index = 3 
-then vpathhml = "/usr/admcom/prevenda/hml/538865/,".
+then vpathhml = "/usr/admcom/local/hml/538865/,".
 if frame-index = 4 
-then vpathhml = "/usr/admcom/prevenda/hml/555859/,".
+then vpathhml = "/usr/admcom/local/hml/555859/,".
 if frame-index = 5 
-then vpathhml = "/usr/admcom/prevenda/hml/cadrapidopv/,".
+then vpathhml = "/usr/admcom/local/hml/cadrapidopv/,".
 
 hide frame fhml no-pause.
-propath = vpathhml + "/usr/admcom/prevenda/,/usr/admcom/prevenda/base/," + vpropath.
+propath = vpathhml + "/usr/admcom/local/,/usr/admcom/local/base/," + vpropath.
 
 status default vhml[frame-index].
 
@@ -169,7 +169,7 @@ then do:
                  no-lock no-error.
     if not avail caixa
     then do:
-        message "Caixa " scxacod " não cadastrado." view-as alert-box.
+        message "Caixa " scxacod " nï¿½o cadastrado." view-as alert-box.
         quit.    
     end.
 end.
@@ -641,7 +641,7 @@ display "" with frame ff2
                             input "          CONFIRMA SAIR DO SISTEMA ?     ",
                             input "",
                             input "   SIM", 
-                            input "   NÃO").
+                            input "   Nï¿½O").
 
             if not sresp
             then next bl-princ.
