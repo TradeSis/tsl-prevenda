@@ -47,31 +47,24 @@ def var vsaida as char.
 DEF VAR startTime as DATETIME.
 def var endTime   as datetime.
 startTime = DATETIME(TODAY, MTIME).
+def var vchost as char.
+def var vlog as char.
+def var vwork as char.
+def var vapi as char.
+run lemestre.p ("api-log", output vlog).
+run lemestre.p ("api-work", output vwork).
+run lemestre.p ("api-host", output vchost).
 
 def stream log.
-output stream log to value("/usr/admcom/logs/api" + pnomeapi + string(today,"99999999") + ".log") append.
+output stream log to value(vlog + "/api" + pnomeapi + string(today,"99999999") + ".log") append.
 
 put stream log unformatted skip(1)
     pnomeapi " PID=" spid "_" spidseq " "
     pnomerecurso " " startTime 
     " ENTRADA-> loja=" + string(setbcod) skip.
 
-vsaida  = "/usr/admcom/work/" + replace(pnomeapi," ","") + replace(pnomerecurso," ","") +
+vsaida  = vwork + replace(pnomeapi," ","") + replace(pnomerecurso," ","") +
             string(today,"999999") + replace(string(time,"HH:MM:SS"),":","") + string(spid) + ".json". 
-
-def var vchost as char.
-def var vhostname as char.
-def var vapi as char.
-input through hostname.
-import vhostname.
-input close.
-
-/* HOST API */
-    if vhostname = "filial188"
-    then do:
-        vchost = "sv-ca-db-qa". 
-    end.        
-    else vchost = "10.2.0.83". 
 
     vapi = "http://\{IP\}/bsweb/api/lojas/cliente".
     

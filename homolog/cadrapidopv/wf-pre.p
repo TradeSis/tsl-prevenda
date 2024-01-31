@@ -452,7 +452,7 @@ repeat with centered row 3 side-label width 80 1 down
     then do on error undo:
         scartao = "".
         /* helio 16112022 novo codigo por clien.ciccgc */
-        update vclichar label "CPF" format "x(11)".
+        update vclichar label "CPF" format "x(14)".
         
         if vclichar <> "" and
            vclichar <> "0" 
