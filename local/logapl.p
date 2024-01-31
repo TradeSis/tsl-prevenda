@@ -68,7 +68,7 @@ def var vhml as char format "x(78)" extent 5 initial
     ["1-Versao de Producao",
      "2-Homologacao Melhoria Venda Outra Loja",
      "3-Homologacao Melhoria Novo modelo TOKEN regional lojas - Orquestra 538865",
-     "4-Homologacao Melhoria 555859 - Duas Garantias em produtos iguais PRE VENDA",
+     "4-Homologacao Melhoria 555859 - Duas Garantias em produtos iguais PRÉ VENDA",
      "5-Homologacao Projeto Cadastro Rapido Na Pre-Venda"].
 
 disp vhml with frame fhml
@@ -169,7 +169,7 @@ then do:
                  no-lock no-error.
     if not avail caixa
     then do:
-        message "Caixa " scxacod " nï¿½o cadastrado." view-as alert-box.
+        message "Caixa " scxacod " não cadastrado." view-as alert-box.
         quit.    
     end.
 end.
@@ -329,7 +329,7 @@ else status default "CUSTOM Business Solutions   ".*/
 
         hide frame f-senh no-pause.
 
-        run /usr/admcom/prevenda/menuprojeto.p.    
+        run /usr/admcom/local/menuprojeto.p.    
 
         /*
         display vtipo[1]
@@ -641,7 +641,7 @@ display "" with frame ff2
                             input "          CONFIRMA SAIR DO SISTEMA ?     ",
                             input "",
                             input "   SIM", 
-                            input "   Nï¿½O").
+                            input "   NÃO").
 
             if not sresp
             then next bl-princ.
