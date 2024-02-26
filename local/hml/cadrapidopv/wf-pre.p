@@ -547,7 +547,7 @@ find caixa where caixa.etbcod = setbcod and
                  caixa.cxacod = scxacod no-lock no-error.
     
 def var volta-preco as log init no.                 
-def var vclichar as char.
+def var vclichar as char no-undo.
 
 bl-princ:
 repeat with centered row 3 side-label width 80 1 down
@@ -569,7 +569,7 @@ repeat with centered row 3 side-label width 80 1 down
     for each tt-bonusviv: delete tt-bonusviv. end.
 
     hide frame fsenha no-pause.
-    vmens = "Digite o CPF ou Leia o codigo do cliente" /*CARTAO 16112022 helio - retirado*/.
+    vmens = "Digite o CPF " /*CARTAO 16112022 helio - retirado*/.
     /*verus
     disp vmens with frame f-mensagem width 80.
     */
@@ -600,12 +600,14 @@ repeat with centered row 3 side-label width 80 1 down
             then do: 
                 vclicod = clien.clicod. 
             end.
+            /** HELIO - 060224 - retirada pesquisa por codigo 
             else do:
                 find clien where clien.clicod = int(vclichar) no-lock no-error.
                 if avail clien
                 then vclicod = clien.clicod.
             end.
-
+            HELIO**/
+            
             /*helio 31012024 retirado
             */
             
@@ -727,6 +729,12 @@ repeat with centered row 3 side-label width 80 1 down
                     message "cliente nao cadastrado".
                     undo.
                 end.
+                if vclicod <> ? and sresp = no
+                then do:
+                    find clien where clien.clicod = vclicod no-lock.
+                    vclichar = clien.ciccgc.
+                    undo.
+                end.    
 
             if vclichar = ""
             then vclicod = 0.

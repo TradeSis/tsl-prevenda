@@ -1,3 +1,5 @@
+/* helio 06022024 - colocado view-as nas messges */
+
 def input param pcpfcnpj    as char.
 def output param pclicod    as int.
 def output param vresp      as log.
@@ -5,7 +7,10 @@ pclicod = ?.
 
 def new global shared var setbcod as int.
 def var par-certo as log.
-
+/* helio 06022024 - testes de telefone */
+def var vx as char.
+def var vok as log.
+def var vconta as int.
 def new shared temp-table ttentrada serialize-name "dadosEntrada" 
     field codigoFilial   as int 
     field cpfCnpj        as char 
@@ -26,7 +31,7 @@ repeat
     title "CADASTRAMENTO DE CLIENTE"
     1 down
     on endkey undo, retry:
-    if retry
+    if retry and keyfunction(lastkey) = "END-ERROR"
     then do:
         vresp = no.
                 run clitelamensagem.p (INPUT-OUTPUT vresp,
@@ -54,15 +59,16 @@ repeat
     run cpf.p (ttentrada.cpfCnpj, output par-certo).
     if not par-certo    
     then do:
-        message "CPF Invalido".
-        undo.
+        message "CPF Invalido" view-as alert-box.
+        undo .
     end.
 
     /* verifica se nao existe ja na matriz */
     run lojapi-clienteconsultar.p (output pclicod).
     if pclicod <> ?
     then do:
-        message "cliente ja cadastrado".
+        hide message no-pause.
+        hide frame fcad no-pause.
         return.
     end.            
 
@@ -72,7 +78,7 @@ repeat
     update  ttentrada.nomeCliente   format "x(40)" label "Nome".
     if ttentrada.nomeCliente = ? or num-entries(ttentrada.nomeCliente," ") < 2
     then do:
-        message "NOME Invalido".
+        message "NOME Invalido" view-as alert-box.
         undo.
     end.
     ttentrada.nomeCliente = caps(ttentrada.nomeCliente).
@@ -80,13 +86,28 @@ repeat
     update     ttentrada.datanascimento    format "99/99/9999" label "Data Nascimento".
     if ttentrada.datanascimento = ?
     then do:
-        message "DATA NASCIMENTO Invalida".
+        message "DATA NASCIMENTO Invalida" view-as alert-box.
         undo.
     end.
-    update     ttentrada.telefone      format "(99)999999999" label "Telefone".
-    if ttentrada.telefone = ? or trim(ttentrada.telefone) = ""
+    update     ttentrada.telefone      format "(xx)xxxxxxxxx" label "Telefone".
+    if ttentrada.telefone = ? or trim(ttentrada.telefone) = "" or
+        length(trim(ttentrada.telefone)) < 10 
     then do:
-        message "TELEFONE Invalido".
+        message "TELEFONE Invalido" view-as alert-box.
+        undo.
+    end.
+    vok = no.
+    vx = substring(ttentrada.telefone,3,1).
+    do vconta = 3 to  length(ttentrada.telefone):
+        if substring(ttentrada.telefone,vconta,1) <> vx
+        then do:
+            vok = yes.
+            leave.
+        end.    
+    end.
+    if vok = no
+    then do:
+        message "TELEFONE Invalido" view-as alert-box.
         undo.
     end.
 
