@@ -249,7 +249,7 @@ def new shared temp-table tpb-contnf
         field contnum like contnf.contnum
         field marca   as   char format "x".
 
-def new shared temp-table tt-liped like com.liped.
+def new shared temp-table tt-liped like liped.
 
 def var vparam as char.
 def var v-arquivo as char.
@@ -354,8 +354,8 @@ vende-seguro = par-valor = "SIM".
 def temp-table twf-movim like wf-movim.
 
 def buffer bwf-movim for wf-movim.
-def var vprocod1 like com.produ.procod.
-def var vetbcod1 like ger.estab.etbcod.
+def var vprocod1 like produ.procod.
+def var vetbcod1 like estab.etbcod.
 
 scli = 0.
 def var vnumero like plani.numero.
@@ -612,7 +612,7 @@ repeat with centered row 3 side-label width 80 1 down
              
             hide frame f-exclusao no-pause.
             /* helio 12112021
-            display vopcre with frame f-opcom.
+            display vopcre with frame f-op
             */
             clear frame fsenha all.
             hide frame fsenha no-pause.

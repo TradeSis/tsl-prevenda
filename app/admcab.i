@@ -7,11 +7,11 @@
 /*----------------------------------------------------------------------------*/
 /***
 message program-name(1) program-name(2). PAUSE 1 NO-MESSAGE.
-***/
+***/ 
 def {1} shared variable wdata as date format "99/99/9999"
                       label "Data de Processamento".
 def {1} shared variable wtittela as char format "x(30)".
-def {1} shared buffer wempre for ger.empre.
+def {1} shared buffer wempre for empre.
 def {1} shared variable wmodulo as c.
 def {1} shared variable wareasis as char format "x(38)".
 def {1} shared variable wtitulo  as char format "x(80)".
@@ -27,22 +27,22 @@ def var b4 as char format "x".
 def var smens as char format "x(20)".
 b1 = "|".
 b2 = "|".
-b3 = "|".
+b3 = "|". 
 b4 = "|".
 define variable ytit like wtittela.
 def new global shared var sparam      as char.
 def new global shared var sresp      as log format "Sim/Nao".
-def new global shared var setbcod    like ger.estab.etbcod.
-def new global shared var sfuncod    like ger.func.funcod.
-/*DESATIVADO-HELIO def new global shared var scxacod    like ger.estab.etbcod. */
-def new global shared var scliente   like ger.admcom.cliente.
-def new global shared var sautoriza  like fin.autoriz.motivo.
-def new global shared var svalor1    like fin.autoriz.valor1.
-def new global shared var svalor2    like fin.autoriz.valor2.
-def new global shared var svalor3    like fin.autoriz.valor3.
-def new global shared var scliaut    like fin.autoriz.clicod.
-def new global shared var stprcod    like fin.tippro.tprcod.
-def new global shared var scli       like ger.clien.clicod.
+def new global shared var setbcod    like estab.etbcod.
+def new global shared var sfuncod    like func.funcod.
+/*DESATIVADO-HELIO def new global shared var scxacod    like estab.etbcod. */
+def new global shared var scliente   as char. 
+def new global shared var sautoriza  as char.
+def new global shared var svalor1   as dec.
+def new global shared var svalor2    as dec.
+def new global shared var svalor3    as dec.
+def new global shared var scliaut    as dec.
+def new global shared var stprcod    as char.
+def new global shared var scli       like clien.clicod.
 /*DESATIVADO-HELIO def new global shared var sprog-fiscal    as   char format "x(40)". 
 def new global shared var secf            as   char format "x(40)".
 def new global shared var sporta-ecf      as   char format "x(40)".
@@ -57,12 +57,12 @@ def new global shared var sretorno-ecf     as   char format "x(40)".
 def new global shared var scabrel       as char.
 def new global shared var sretorno     as    char format "x(40)".
 def new global shared var sestacao     as char.
-def new global shared var wserie-nf  like com.plani.serie.
-def new global shared var wemite-nf  like com.plani.emite. 
-def new global shared var wnumero-nf like com.plani.numero.
-def new global shared var wplacod-nf like com.plani.placod.
+def new global shared var wserie-nf  as char.
+def new global shared var wemite-nf  as int. 
+def new global shared var wnumero-nf as int.
+def new global shared var wplacod-nf as int.
 def new global shared var warqlog-pdv as char.
-def new global shared var wcontnum   like fin.contrato.contnum.
+def new global shared var wcontnum   like contrato.contnum.
 def new global shared var wtpamb-nf  as char.
 def new global shared var wmodelo-nf  as char.
 def new global shared var wfuso-hora as char.
@@ -102,7 +102,7 @@ end.
 
 ytit = fill(" ",integer((30 - length(wtittela)) / 2)) + wtittela.
 
-find ger.estab where ger.estab.etbcod = setbcod no-lock.
+find estab where estab.etbcod = setbcod no-lock.
 
 form space(1)
     wempre.emprazsoc format "x(65)" space(03) wdata

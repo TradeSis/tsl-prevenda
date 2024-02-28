@@ -321,13 +321,14 @@ procedure inclusao-manual.
             message "Produto nao pertence a esta nota".
             undo.
         end.
-                
+        
+        /*  helio 28022024      
         if wf-movim.movqtm <> 1
         then do :
             message "Quantidade diferente de 1".
             undo.
         end.
-
+        */
         find first produaux where produaux.procod     = produ.procod
                               and produaux.nome_campo = "TempoGar"
                             NO-LOCK no-error.
