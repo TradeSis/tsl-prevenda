@@ -14,11 +14,13 @@ relat/*
 .vscode/*
 teste
 editor
+editor.bat
 etc
 etc/*
 VERSAO
 VERSAO/*
 filial
+filial.bat
 desenv
 desenv/*
 progr

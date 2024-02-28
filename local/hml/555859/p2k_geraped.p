@@ -1,3 +1,4 @@
+/* helio 08022024 - versao 2 garantias 555859 */
 /* helio 02082023 - IDENTIFICAÇÃO VENDAS COM COTAS - PROCESSO 521965*/
 /* helio 23022023 Projeto Alteração Alíquota de ICMS PR - Volmir */
 /* 31012023 helio - ajuste projeto cupom desconto b2b - sera enviado o cupom no tipo 8 */
@@ -22,6 +23,7 @@ def input parameter par-rec as recid.
 def input param par-campanha as int.
 def input param par-valorcupomdesconto as dec.
 
+def var vx as int. /* contador */
 def shared var pmoeda as char format "x(30)".
 def shared var vcupomb2b as int format ">>>>>>>>>9". /* helio 31012023 - cupom b2b */
 def shared var vplanocota as int. /* helio 02082023 */
@@ -423,7 +425,10 @@ for each movim where movim.etbcod = plani.etbcod
 end.
 
 for each tt-seg-movim no-lock.
-    vprotot = vprotot + tt-seg-movim.movpc.
+    find first wf-movim where recid(wf-movim) = tt-seg-movim.recid-wf-movim.
+    do vx = 1 to wf-movim.movqtm:
+        vprotot = vprotot + tt-seg-movim.movpc.
+    end.        
 end.
 
 /***
@@ -459,7 +464,6 @@ end.
 /***
     Registro 05 - GE / RFQ
 ***/
-def var vx as int.
 for each tt-seg-movim no-lock.
 
     
