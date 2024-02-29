@@ -1,29 +1,6 @@
-/* helio02082023 - INCLUIR CAMPO TEMPO DE GARANTIA NA PRï¿½ VENDA - PROCESSO 521910 */
-/* helio 15052023 - ID 25571 - Seguro prestamista */
-/* 23012023 helio - ajuste projeto cupom desconto b2b */
-/* helio #092022 - LIGA/DESLIGA api consultarproduto + CACHE  api consultarproduto */
-/* helio 20012022 - [UNIFICAï¿½ï¿½O ZURICH - FASE 2] NOVO Cï¿½LCULO PARA SEGURO PRESTAMISTA Mï¿½VEIS NA PRï¿½-VENDA */
 
-/*
-/* helio 09032022 - [ORQUESTRA 243179 - ESCOPO ADICIONAL] Seleï¿½ï¿½o de moeda a vista na Prï¿½-Venda  */
-
-helio 09022022 - [ORQUESTRA 243179] Seleï¿½ï¿½o de moeda a vista na Prï¿½-Venda 
-helio 22122021    fase II.3 
-helio 08/12/2021  fase II.2
-helio 12/11/2021 novos campos fase 2
-helio 02/08/2021 mensagem de seguro
-*/
-
-/* 15/09/2014 foi enviado para as lojas - Projeto Descontos Senhas  *}*/
-/* #1 TP 20985036 - [819775] Validaï¿½ï¿½o ICCID [Gabriel] - Mudar para Numerico*/
-/* #2 Projeto Garantia/RFQ */
-/* #3 Descontos Maximos Por Setor */
-
-/* #092022 */
 def new shared var vapiconsultarproduto as log format "Ligado/Desligado".
-/* #092022 */
 
-/* HELIO 27062022 Projeto Normativas ST Mercadorias */
 def temp-table ttst no-undo
     field ncm   like produ.codfis format "99999999"
     index x is unique primary ncm asc.
@@ -43,7 +20,8 @@ end.
 
 /** **/
 def new shared var pmoeda as char format "x(30)".
-def new global shared var vpromocod   as char. /* helio 09032022 - [ORQUESTRA 243179 - ESCOPO ADICIONAL] Seleï¿½ï¿½o de moeda a vista na Prï¿½-Venda  */
+def new global shared var vpromocod   as char. /* helio 09032022 - [ORQUESTRA 243179 - ESCOPO ADICIONAL] Seleção de moeda a vista na Pré-Venda  */
+
 vpromocod = "".
 
 def var vpromocavista as log.
@@ -588,7 +566,7 @@ repeat with centered row 3 side-label width 80 1 down
        vclicod = 1
     then do on error undo:
         scartao = "".
-        /* HÃ©lio 31012024 - RETIRADO COMENTARIOS */
+        /* Hélio 31012024 - RETIRADO COMENTARIOS */
         update vclichar label "CPF" format "x(14)".
         
         if vclichar <> "" and
@@ -1102,7 +1080,7 @@ repeat with centered row 3 side-label width 80 1 down
             if avail produ
             then do:
                 
-                /* Projeto Rollout Mï¿½veis no Profimetrics */
+                /* Projeto Rollout Móveis no Profimetrics */
                 /* nao vai ser implantada esta parte do projeto 
                 if false /*(produ.datexp = ? or (produ.datexp <> ? and
                                          produ.datexp < today))*/
@@ -1144,7 +1122,7 @@ repeat with centered row 3 side-label width 80 1 down
             def var vpedid_abe     like liped.lipqtd. 
             def var vestoq_fil     like estoq.estatual.
             
-            /* Projeto Rollout Mï¿½veis no Profimetrics
+            /* Projeto Rollout Móveis no Profimetrics
                nao vai ser implantada esta parte do projeto
             if avail estoq and estoq.estloc <> ""
             then do.                
@@ -1244,7 +1222,7 @@ repeat with centered row 3 side-label width 80 1 down
             if vprocod <> vult-p
             then do:
                 /************************************************************
-                  Solicita plano apenas para produto que nï¿½o possui a palavra 
+                  Solicita plano apenas para produto que não possui a palavra 
                    CHIP no nome.
                 ************************************************************/
                 /*
@@ -1272,7 +1250,7 @@ repeat with centered row 3 side-label width 80 1 down
                     run esc-pro.p (input vopecod, output vtipviv).
                     
                     disp skip
-                         vtipviv label "Serviï¿½o......." format ">>>9"
+                         vtipviv label "Serviço......." format ">>>9"
                          with frame f-plaviv.
                            
                     find promoviv where promoviv.opecod = vopecod 
@@ -1280,7 +1258,7 @@ repeat with centered row 3 side-label width 80 1 down
                                     no-lock no-error.
                     if not avail promoviv
                     then do:
-                        message "Serviï¿½o nï¿½o encontrado.".
+                        message "Serviço não encontrado.".
                         pause.
                         undo.
                     end.
@@ -1289,7 +1267,7 @@ repeat with centered row 3 side-label width 80 1 down
                          with frame f-plaviv.
                     pause 0.
 
-                    /* Se o Serviï¿½o selecionado Nï¿½O ï¿½ prï¿½-pago */
+                    /* Se o Serviço selecionado NÃO é pré-pago */
                     if promoviv.provivnom <> "PRE PAGO"
                     then do:
                         run esc-pla.p(input vtipviv, 
@@ -1328,7 +1306,7 @@ repeat with centered row 3 side-label width 80 1 down
                         end.
 
                         /**************************************************
-                            Valida se plano de telefonia ï¿½ vï¿½lido para
+                            Valida se plano de telefonia é válido para
                             a Filial
                          **************************************************/
                         
@@ -2101,7 +2079,7 @@ repeat with centered row 3 side-label width 80 1 down
                        no-lock no-error.
             
             if prevenda = no
-            then do: /**ESTE BLOCO DEMORA NO PRIMEIRA INCLUSï¿½O**/
+            then do: /**ESTE BLOCO DEMORA NO PRIMEIRA INCLUSÃO**/
                 
                 find produ where produ.procod = int(vprocod) 
                            no-lock no-error.
@@ -2440,7 +2418,7 @@ repeat with centered row 3 side-label width 80 1 down
                     wf-movim.vencod   = v-vencod
                     wf-movim.movpc    = vpreco.
 
-                if wf-movim.movqtm = 1
+                if wf-movim.movqtm >= 1 /* 555859 HELIO */
                 then do:
                     parametro-in = "DESCONTO-ITEM=S|PRODUTO=" +
                                    string(produ.procod) + "|".
@@ -3805,6 +3783,7 @@ procedure p-atu-frame:
     clear frame f-produ1 all no-pause.
     
     def var xprocod as int.
+    def var vpronom as char.    
     
     xprocod = ?.
     
@@ -3814,9 +3793,19 @@ procedure p-atu-frame:
     for each wf-movim /*with frame f-produ1 */:
         vitem = vitem + 1.
         find produ where recid(produ) = wf-movim.wrec no-lock.
+        vpronom = produ.pronom.        
+        if wf-movim.movalicms = 98 
+        then do:
+            release btt-seg-movim.
+            find first btt-seg-movim where btt-seg-movim.recid-wf-movim = recid(wf-movim) no-lock no-error.
+            if avail btt-seg-movim
+            then     do:
+                vpronom = trim(produ.pronom) + " (" + string(btt-seg-movim.procod) + ")". 
+            end.            
+        end.            
         disp
             produ.procod 
-            produ.pronom
+            vpronom @ produ.pronom
             wf-movim.movqtm
             wf-movim.precoori when wf-movim.precoori > wf-movim.movpc
             wf-movim.movpc
@@ -3827,7 +3816,7 @@ procedure p-atu-frame:
         vprotot = vprotot + (wf-movim.movqtm * wf-movim.movpc).
         v-qtd = v-qtd + wf-movim.movqtm.
         find first tt-seg-movim where tt-seg-movim.seg-procod = produ.procod no-error.
-        if not avail tt-seg-movim /* nï¿½o faz para seguro */
+        if not avail tt-seg-movim /* não faz para seguro */
            and produ.proipiper <> 98 /* Servico */
         then xprocod = produ.procod.
     end.
@@ -4987,7 +4976,7 @@ procedure p-tbprice-ccid:
                             no-lock no-error. /* #1 */
         if avail btbprice
         then do:
-            message "ICCID jï¿½ cadastrado" view-as alert-box.
+            message "ICCID já cadastrado" view-as alert-box.
             undo, retry.
         end.                  
         else do:
@@ -5068,31 +5057,31 @@ end procedure.
 procedure parametros-BLACKFRIDAY:
 
     assign
-        pdti-black = date(08,23,2018)  /*data inicio promoï¿½ï¿½o*/
-        pdtf-black = date(08,23,2018)  /*data fim promoï¿½ï¿½o*/
+        pdti-black = date(08,23,2018)  /*data inicio promoção*/
+        pdtf-black = date(08,23,2018)  /*data fim promoção*/
         vdti-black = date(08,23,2018)  /*data inicio venda*/
         vdtf-black = date(08,23,2018)  /*data fim venda*/
         valt-black = 150               /*valor minimo*/               
-        vdes-black = yes               /*Aplicar desconto no preï¿½o*/
+        vdes-black = yes               /*Aplicar desconto no preço*/
         vpct-black = 50                /*percentual desconto*/
         .
 /***** 
 Solicitamos que seja criado um oferta Black Friday para que funcione apenas nas seguintes filiais: 52,80,100,101,103,104,108,113,130 e 134.
 
-As Compras de clientes: serï¿½o feitas nos dias 10 e 11/07
-E poderï¿½o ser utilizadas nos dias: 13 e 14/07
+As Compras de clientes: serão feitas nos dias 10 e 11/07
+E poderão ser utilizadas nos dias: 13 e 14/07
 *****/    
 /*
     if setbcod = 189 or setbcod = 52 or setbcod = 80 or setbcod = 100 or
        setbcod = 101 or setbcod = 103 or setbcod = 104 or setbcod = 108 or
        setbcod = 113 or setbcod = 130 or setbcod = 134
     then assign
-            pdti-black = date(11,23,2015) /*data inicio promoï¿½ï¿½o*/
-            pdtf-black = date(11,24,2015) /*data fim promoï¿½ï¿½o*/
+            pdti-black = date(11,23,2015) /*data inicio promoção*/
+            pdtf-black = date(11,24,2015) /*data fim promoção*/
             vdti-black = date(11,21,2015) /*data inicio venda*/
             vdtf-black = date(11,22,2015) /*data fim venda*/
             valt-black = 100              /*valor minimo*/
-            vdes-black = yes              /*Aplicar desconto no preï¿½o*/
+            vdes-black = yes              /*Aplicar desconto no preço*/
             vpct-black = 50               /*percentual desconto*/.
 */
 end procedure. 
@@ -5390,7 +5379,7 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                             and tt-descfunc.tem_cadastro = yes
                             and tt-descfunc.tipo_funcionario = no
                         then do:
-                            message "CPF nÃ£o Ã© de um funcionÃ¡rio."
+                            message "CPF não é de um funcionário."
                                         view-as alert-box.
                             undo.
                         end.
