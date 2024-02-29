@@ -9,7 +9,7 @@ def var vende-garan as log.
 */
 def {1} SHARED temp-table tt-seg-movim
     field seg-procod  as int             /* procod do seguro */
-    field procod      like movim.procod  /* procod de venda */
+    field procod      like movim.procod    
     field ramo        as int
     field meses       as int
     field subtipo     as char
@@ -18,6 +18,7 @@ def {1} SHARED temp-table tt-seg-movim
     field p2k-datahoraprodu as char
     field p2k-id_seguro     as int
     field p2k-datahoraplano as char
+    field recid-wf-movim as recid init ?
     index seg-movim is primary unique seg-procod procod.
 
 /*
@@ -38,6 +39,9 @@ def {1} SHARED temp-table tt-segprodu no-undo
 /***
     Venda
 ***/
+def buffer pprodu for produ.
+def buffer pwf-movim for wf-movim.
+def buffer btt-seg-movim for tt-seg-movim.
 procedure vende-segprod.
 
     def input parameter par-procod   as int. /* procod da venda */
@@ -83,19 +87,6 @@ procedure inclusao-segprod.
     find btt-segprodu where recid(btt-segprodu) = par-rec-segpro no-lock.
     find bprodu where bprodu.procod = btt-segprodu.seg-procod no-lock.
 
-    /*
-      movim de um determinado seguro
-    */
-    find first wf-movim where wf-movim.wrec = recid(bprodu) no-lock no-error.
-    if not avail wf-movim
-    then do:
-        create wf-movim.
-        assign
-            wf-movim.wrec      = recid(bprodu)
-            wf-movim.movalicms = 98.
-    end.
-    wf-movim.movqtm = /*#1 wf-movim.movqtm + */ 1.
-    wf-movim.movpc  = wf-movim.movpc + btt-segprodu.prvenda.
 
     /*
       Produtos que compoem o seguro
@@ -109,7 +100,7 @@ procedure inclusao-segprod.
         create tt-seg-movim.
         assign
             tt-seg-movim.seg-procod = btt-segprodu.seg-procod
-            tt-seg-movim.procod     = par-procod
+            tt-seg-movim.procod    = par-procod
             tt-seg-movim.ramo       = btt-segprodu.ramo
             tt-seg-movim.meses      = btt-segprodu.meses
             tt-seg-movim.subtipo    = btt-segprodu.tipo
@@ -118,6 +109,24 @@ procedure inclusao-segprod.
             tt-seg-movim.p2k-datahoraprodu = btt-segprodu.p2k-datahoraprodu
             tt-seg-movim.p2k-id_seguro     = btt-segprodu.p2k-id_seguro
             tt-seg-movim.p2k-datahoraplano = btt-segprodu.p2k-datahoraplano.
+
+        
+        create wf-movim.
+        assign
+                wf-movim.wrec      = recid(bprodu)
+                wf-movim.movalicms = 98.
+        wf-movim.movqtm = /*wf-movim.movqtm +*/ 1 .  /* helio 101123 - 555859 - Duas Garantias em produtos iguais PRÉ VENDA */
+        wf-movim.movpc  = wf-movim.movpc + btt-segprodu.prvenda.
+            
+        tt-seg-movim.recid-wf-movim = recid(wf-movim).
+        
+    end.
+    else do:
+    
+        find first wf-movim where recid(wf-movim) = tt-seg-movim.recid-wf-movim no-error.
+        if avail wf-movim
+        then wf-movim.movqtm = wf-movim.movqtm + 1 .  /* helio 101123 - 555859 - Duas Garantias em produtos iguais PRÉ VENDA */
+
     end.
 
 end procedure.
@@ -138,16 +147,14 @@ procedure exclui-segprod.
            tt-seg-movim.seg-procod <> par-segprodu
         then next.
 
-        /* Verifica se tem outro produto de venda para este seguro */
-        find bprodu where bprodu.procod = tt-seg-movim.seg-procod no-lock.
-        find first wf-movim where wf-movim.wrec = recid(bprodu).
-        assign
-            /*#1 wf-movim.movqtm = wf-movim.movqtm - 1. */
-            wf-movim.movpc  = wf-movim.movpc  - tt-seg-movim.movpc.
-        if /*#1 wf-movim.movqtm*/ wf-movim.movpc <= 0
-        then delete wf-movim.
-
-        delete tt-seg-movim.
+        find wf-movim where recid(wf-movim) = tt-seg-movim.recid-wf-movim.
+        wf-movim.movqtm = wf-movim.movqtm - 1.
+        
+        if wf-movim.movqtm <= 0  /* helio 101123 - 555859 - Duas Garantias em produtos iguais PRÉ VENDA */
+        then do:
+            delete wf-movim.
+            delete tt-seg-movim.
+        end.
     end.
 
 /***

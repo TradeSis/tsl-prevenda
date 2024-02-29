@@ -483,7 +483,7 @@ end.
     end.
    
     pedidoespecial = no.
-    for each wf-movim:
+    for each wf-movim by wf-movim.movalicms:
         
         vmovseq = vmovseq + 1.
         find produ where recid(produ) = wf-movim.wrec no-lock.
@@ -499,8 +499,21 @@ end.
             find first tt-planos-vivo where 
                        tt-planos-vivo.procod = produ.procod no-lock no-error.
 
-            create movim.
-            ASSIGN movim.movtdc    = plani.movtdc
+            find first movim where movim.etbcod = plani.etbcod and
+                                   movim.placod = plani.placod and
+                                   movim.procod = produ.procod
+                                   exclusive no-error.
+            if avail movim
+            then do:
+                def var vmovtot as dec.
+                vmovtot = (movim.movpc * movim.movqtm).
+                movim.movqtm = movim.movqtm + wf-movim.movqtm.
+                movim.movpc  = (vmovtot + wf-movim.movpc) / movim.movqtm.
+            end.
+            else do:
+                create movim.
+                assign
+                    movim.movtdc    = plani.movtdc
                    movim.PlaCod    = plani.placod 
                    movim.etbcod    = plani.etbcod 
                    movim.emite     = plani.emite 
@@ -517,7 +530,9 @@ end.
                                      when avail tt-planos-vivo
                    movim.ocnum[9]  = tt-planos-vivo.codviv
                                      when avail tt-planos-vivo.
-                                     
+            
+            end.
+                                                 
             /** Chamado 16177 - supervisor **/
             find first tt-senauto where 
                        tt-senauto.procod = produ.procod no-lock no-error.

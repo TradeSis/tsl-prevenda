@@ -1,29 +1,6 @@
-/* helio02082023 - INCLUIR CAMPO TEMPO DE GARANTIA NA PRÉ VENDA - PROCESSO 521910 */
-/* helio 15052023 - ID 25571 - Seguro prestamista */
-/* 23012023 helio - ajuste projeto cupom desconto b2b */
-/* helio #092022 - LIGA/DESLIGA api consultarproduto + CACHE  api consultarproduto */
-/* helio 20012022 - [UNIFICAÇÃO ZURICH - FASE 2] NOVO CÁLCULO PARA SEGURO PRESTAMISTA MÓVEIS NA PRÉ-VENDA */
 
-/*
-/* helio 09032022 - [ORQUESTRA 243179 - ESCOPO ADICIONAL] Seleção de moeda a vista na Pré-Venda  */
-
-helio 09022022 - [ORQUESTRA 243179] Seleção de moeda a vista na Pré-Venda 
-helio 22122021    fase II.3 
-helio 08/12/2021  fase II.2
-helio 12/11/2021 novos campos fase 2
-helio 02/08/2021 mensagem de seguro
-*/
-
-/* 15/09/2014 foi enviado para as lojas - Projeto Descontos Senhas  *}*/
-/* #1 TP 20985036 - [819775] Validação ICCID [Gabriel] - Mudar para Numerico*/
-/* #2 Projeto Garantia/RFQ */
-/* #3 Descontos Maximos Por Setor */
-
-/* #092022 */
 def new shared var vapiconsultarproduto as log format "Ligado/Desligado".
-/* #092022 */
 
-/* HELIO 27062022 Projeto Normativas ST Mercadorias */
 def temp-table ttst no-undo
     field ncm   like produ.codfis format "99999999"
     index x is unique primary ncm asc.
@@ -44,6 +21,7 @@ end.
 /** **/
 def new shared var pmoeda as char format "x(30)".
 def new global shared var vpromocod   as char. /* helio 09032022 - [ORQUESTRA 243179 - ESCOPO ADICIONAL] Seleção de moeda a vista na Pré-Venda  */
+
 vpromocod = "".
 
 def var vpromocavista as log.
@@ -547,7 +525,7 @@ find caixa where caixa.etbcod = setbcod and
                  caixa.cxacod = scxacod no-lock no-error.
     
 def var volta-preco as log init no.                 
-def var vclichar as char.
+def var vclichar as char no-undo.
 
 bl-princ:
 repeat with centered row 3 side-label width 80 1 down
@@ -569,7 +547,7 @@ repeat with centered row 3 side-label width 80 1 down
     for each tt-bonusviv: delete tt-bonusviv. end.
 
     hide frame fsenha no-pause.
-    vmens = "Digite o CPF ou Leia o codigo do cliente" /*CARTAO 16112022 helio - retirado*/.
+    vmens = "Digite o CPF " /*CARTAO 16112022 helio - retirado*/.
     /*verus
     disp vmens with frame f-mensagem width 80.
     */
@@ -583,18 +561,13 @@ repeat with centered row 3 side-label width 80 1 down
            vitem   = 0 
            vbonus  = 0 
            vmoecod = "".
-    
+
     if vclicod = 0  or
        vclicod = 1
     then do on error undo:
         scartao = "".
-        /* helio 16112022 novo codigo por clien.ciccgc */
-        update vclichar label "CPF" format "x(11)".
-        
-        /*helio 16112022 retirado
-        if search("/usr/admcom/cartao-lebes.ini") <> ?
-        then update vclichar /*blank*/ label "CPF" format "x(12)".
-        helio 16112022 retirado***/
+        /* Hélio 31012024 - RETIRADO COMENTARIOS */
+        update vclichar label "CPF" format "x(14)".
         
         if vclichar <> "" and
            vclichar <> "0" 
@@ -605,175 +578,142 @@ repeat with centered row 3 side-label width 80 1 down
             then do: 
                 vclicod = clien.clicod. 
             end.
+            /** HELIO - 060224 - retirada pesquisa por codigo 
             else do:
                 find clien where clien.clicod = int(vclichar) no-lock no-error.
                 if avail clien
                 then vclicod = clien.clicod.
             end.
-
-            /*helio 16112022 retirado
-            if length(vclichar) > 10 /*** 04/2017 ***/
-            then do.  
-                if length(trim(vclichar)) = 11
-                then vclichar = "0" + trim(vclichar).
-
-                vparam-WG = vclichar + string(setbcod,"999").
-                /*#2 conecta-ok = no.*/
-                    run agil4_WG.p (input "prevenda", input vparam-WG).
-                    if conecta-ok = no
-                    then next.
-                find adm.tbcartao where adm.tbcartao.codope = 999 and
-                                    adm.tbcartao.nrocartao = vclichar
-                               no-lock no-error.
-                if not avail adm.tbcartao 
+            HELIO**/
+            
+            /*helio 31012024 retirado
+            */
+            
+            disp vclichar.
+            /* Helio 31012024 - Quando Cliente Nao existe, Entra Rotina de Cadastramento */
+            if not avail clien
+            then do: 
+                run clicadrap.p (vclichar, output vclicod, output sresp).
+                if vclicod = ? and sresp = no
                 then do:
-                    if search("/usr/admcom/progr/agil4_WG.p") = ?
-                    then do:
-                        if search("/usr/admcom/progr/buscarmat.p") <> ?
-                        then run buscarmat.p(vclichar).
-                    end.
-                    find adm.tbcartao where
-                            adm.tbcartao.codope = 999 and
-                            adm.tbcartao.nrocartao = vclichar
-                        no-lock no-error.
-                    if not avail adm.tbcartao 
-                    then do:
-                        message "Cartao nao encontrado." view-as alert-box.
-                        undo.     
-                    end.
-                end.
-                if avail tbcartao and tbcartao.situacao = "C"
-                then do:
-                    message "Cartao esta CANCELADO" view-as alert-box.
+                    message "cliente nao cadastrado".
                     undo.
                 end.
-                
-            end.
-            /*** ***/
-
-            if length(vclichar) > 11
-            then do:
-                vclicod = int(substr(vclichar,3,10)).
-                scartao = vclichar.
-            end.
-            else if length(vclichar) > 10
+                find clien where clien.clicod = vclicod no-lock no-error.
+                if not avail clien
                 then do:
-                    vclicod = int(substr(vclichar,2,10)).
-                    scartao = vclichar.
-                end.
-                else do.
-                    vclicod = int(vclichar).
-                    vparam-WG = fill ("0",12 - length(vclichar)) + vclichar
-                                                    + string(setbcod,"999").
-                    run agil4_WG.p (input "prevenda", input vparam-WG).
-                    /*
-                    run agil4_WG.p (input "cx2venda", 
-                                    input string(setbcod,"999") +
-                                          string(vclicod,"9999999999")).
-                    */
-                  run p-grava-clien-matfil(input vclicod).
-                end.
-            helio 16112022 retirado***/
-        
-        /*helio 16112022 retirado  
-        vclichar = string(vclicod).
-        */
-        disp vclichar.
-        sal-aberto = 0.
-        lim-calculado = 0.
-        vlimcrd = 0.
-        
-        if vclicod > 0
-        then do:
-            find clien where clien.clicod = vclicod no-lock no-error.
-            if not avail clien
-            then do:
-                message "Cliente nao cadastrado." view-as alert-box.
-                undo.
-            end.
+                    vclicod = 0.
+                    vclichar = "".
+                    disp vclichar.
+                end.    
+            end.                
             
-            vclichar = clien.ciccgc.
             
-            disp vclichar
-                clien.clinom no-label format "x(40)"
-                clien.clicod no-label .
-            find cpclien where cpclien.clicod = vclicod no-lock no-error.
+            sal-aberto = 0.
+            lim-calculado = 0.
+            vlimcrd = 0.
         
-            if vclicod > 1
+            if vclicod > 0
             then do:
-                vdiscre = no.
-                run credito.
-                if lim-calculado <= 100 /*clien.limcrd < 200*/
+                find clien where clien.clicod = vclicod no-lock no-error.
+                if not avail clien
                 then do:
-                    /*vmen-cre = "      FAVOR ATUALIZAR O CADASTRO".
-                    run mens-credito.
-                    leave bl-princ.
-                    */
+                    message "Cliente nao cadastrado." view-as alert-box.
+                    undo.
                 end.
-                else do:
-                    vmen-cre = "      PARABENS, SEU LIMITE É DE R$ " + 
-                            string(vlimcrd,">>,>>9.99").
-                    run mens-credito.
-                    vdiscre = yes.
+            
+                vclichar = clien.ciccgc.
+            
+                disp vclichar
+                    clien.clinom no-label format "x(40)"
+                    clien.clicod no-label .
+                find cpclien where cpclien.clicod = vclicod no-lock no-error.
+        
+                if vclicod > 1
+                then do:
+                    vdiscre = no.
                     run credito.
-                    disp string(day(clien.dtnasc),"99") + "/" +
-                         string(month(clien.dtnasc),"99")
-                         label "       Aniversario" format "x(6)"
-                         clien.dtcad label "Cliente desde"
+                    if lim-calculado <= 100 /*clien.limcrd < 200*/
+                    then do:
+                        /*vmen-cre = "      FAVOR ATUALIZAR O CADASTRO".
+                        run mens-credito.
+                        leave bl-princ.
+                        */
+                    end.
+                    else do:
+                    vmen-cre = "      PARABENS, SEU LIMITE É DE R$ " + 
+                                string(vlimcrd,">>,>>9.99").
+                        run mens-credito.
+                        vdiscre = yes.
+                        run credito.
+                        disp string(day(clien.dtnasc),"99") + "/" +
+                             string(month(clien.dtnasc),"99")
+                             label "       Aniversario" format "x(6)"
+                             clien.dtcad label "Cliente desde"
                                 format "99/99/9999"
                                 with frame f-aniver 1 down no-box side-label.
-                    run tem-cartao-bonus1.
-                    v-cmp = 0.
-                    disp "" at 1 with frame ffff1
-                        no-label no-box. 
-                    pause 0.
+                        run tem-cartao-bonus1.
+                        v-cmp = 0.
+                        disp "" at 1 with frame ffff1
+                            no-label no-box. 
+                        pause 0.
                     
-                    for each tp-movim no-lock 
-                                break by tp-movim.movdat descending:
-                    find produ where produ.procod = tp-movim.procod 
-                        no-lock no-error.
-                    if not avail produ
-                    then next.    
-                    disp tp-movim.movdat column-label "Data compra"
-                                format "99/99/9999"
-                         tp-movim.procod  column-label "Produto"
-                                format ">>>>>>>>9"
-                         produ.pronom    format "x(29)" column-label "Descricao"
-                         tp-movim.movqtm column-label "Quant" format ">>>>9"
-                         tp-movim.movpc  column-label "Preco" format ">>,>>9.99"
-                         tp-movim.movpc * tp-movim.movqtm
-                            column-label "Total" format ">>>,>>9.99"
-                         with frame f-venda 3 down width 80
-                         title " Ultimos produtos comprados ".
-                     v-cmp = v-cmp + 1.
-                     if v-cmp = 3
-                     then leave.
+                        for each tp-movim no-lock 
+                                    break by tp-movim.movdat descending:
+                            find produ where produ.procod = tp-movim.procod 
+                                no-lock no-error.
+                            if not avail produ
+                            then next.    
+                            disp tp-movim.movdat column-label "Data compra"
+                                        format "99/99/9999"
+                                 tp-movim.procod  column-label "Produto"
+                                        format ">>>>>>>>9"
+                                 produ.pronom    format "x(29)" column-label "Descricao"
+                                 tp-movim.movqtm column-label "Quant" format ">>>>9"
+                                 tp-movim.movpc  column-label "Preco" format ">>,>>9.99"
+                                 tp-movim.movpc * tp-movim.movqtm
+                                    column-label "Total" format ">>>,>>9.99"
+                                 with frame f-venda 3 down width 80
+                                 title " Ultimos produtos comprados ".
+                             v-cmp = v-cmp + 1.
+                             if v-cmp = 3
+                             then leave.
+                        end.
+                    
+                        if (clien.medatr > 0 and
+                            clien.medatr < today - dat-vencto)
+                           or clien.medatr = ? and dat-vencto < today
+                        then do:
+                            vmens = "                    " +
+                             "Parcela(s) em aberto desde " +
+                            string(dat-vencto,"99/99/9999") .
+                            hide message no-pause.
+                            message vmens.
+                            /*verus
+                                disp vmens with frame f-mensagem width 80.
+                                */
+                        end.   
+                        /*run tem-cartao-bonus1. */
+                        pause.
                     end.
-                    /*verus
-                    vmens = "".
-                    disp vmens with frame f-mensagem width 80.
-                    */
-                    
-                    if (clien.medatr > 0 and
-                        clien.medatr < today - dat-vencto)
-                       or clien.medatr = ? and dat-vencto < today
-                    then do:
-                        vmens = "                    " +
-                         "Parcela(s) em aberto desde " +
-                        string(dat-vencto,"99/99/9999") .
-                        hide message no-pause.
-                        message vmens.
-                        /*verus
-                            disp vmens with frame f-mensagem width 80.
-                            */
-                    end.   
-                    /*run tem-cartao-bonus1. */
-                    pause.
                 end.
-            end.
-        end. 
+            end. 
         end.
         else do:
+                /* Helio 31012024 - Quando Cliente nao Informado - Entra Rotina de Cadastramento */
+                run clicadrap.p (vclichar, output vclicod, output sresp).
+                if vclicod = ? and sresp = no
+                then do:
+                    message "cliente nao cadastrado".
+                    undo.
+                end.
+                if vclicod <> ? and sresp = no
+                then do:
+                    find clien where clien.clicod = vclicod no-lock.
+                    vclichar = clien.ciccgc.
+                    undo.
+                end.    
+
             if vclichar = ""
             then vclicod = 0.
             else vclicod = int(vclichar).
@@ -2478,7 +2418,7 @@ repeat with centered row 3 side-label width 80 1 down
                     wf-movim.vencod   = v-vencod
                     wf-movim.movpc    = vpreco.
 
-                if wf-movim.movqtm >= 1 /* 555859 */
+                if wf-movim.movqtm >= 1 /* 555859 HELIO */
                 then do:
                     parametro-in = "DESCONTO-ITEM=S|PRODUTO=" +
                                    string(produ.procod) + "|".

@@ -174,15 +174,16 @@ then do:
                 find clien where clien.clicod = pclicod exclusive no-error.
                 if not avail clien
                 then do:
+                   
                     create clien. 
                     assign 
                         clien.clicod = pclicod . 
+                        clien.tippes = yes. 
+                        clien.etbcad = setbcod. 
                 end.                        
                     clien.ciccgc = string(ttclien.cpfCnpj). 
                     clien.clinom = string(ttclien.nomeCliente). 
-                    clien.tippes = no. 
-                    clien.etbcad = setbcod. 
-                    clien.dtnasc = ttclien.dataNascimento. 
+                        clien.dtnasc = ttclien.dataNascimento. 
                     clien.fone = ttclien.telefone.
             end.
         end. 
