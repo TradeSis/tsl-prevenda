@@ -304,7 +304,7 @@ def new shared var vvalor-chpu  like titulo.titvlcob.
 def var vnumero-chpu-aux as int format ">>>>>>>9".
 def var vdescper as dec format ">>9.99 %".
 def var vescd as char format "x(15)" extent 3
-                 init ["1. Valor     ", "2. Percentual", "3. Funcionï¿½rio"].
+                 init ["1. Valor     ", "2. Percentual", "3. Funcionário"].
 def var vtipo-desc as int.
 def var vusacartao as int.
 def var vqtdcel    as int.
@@ -663,7 +663,7 @@ repeat with centered row 3 side-label width 80 1 down
                         */
                     end.
                     else do:
-                        vmen-cre = "      PARABENS, SEU LIMITE ï¿½ DE R$ " + 
+                    vmen-cre = "      PARABENS, SEU LIMITE É DE R$ " + 
                                 string(vlimcrd,">>,>>9.99").
                         run mens-credito.
                         vdiscre = yes.
@@ -945,8 +945,8 @@ repeat with centered row 3 side-label width 80 1 down
                         (input-output sresp,  
                         input     "          PRODUTO DESCONTINUADO.        "  + 
                         "                                        "  +     
-                        "    Sï¿½ seguir com a venda se o mesmo    "  + 
-                        " estiver disponï¿½vel no estoque na loja. "   + 
+                        "    Só seguir com a venda se o mesmo    "  + 
+                        " estiver disponível no estoque na loja. "   + 
                         "                                        "  + 
                         "                CONTINUAR ?             ", 
                         input "").          
@@ -5379,10 +5379,10 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                         if avail tt-descfunc
                             and tt-descfunc.tem_cadastro = no
                         then do:
-                            message "CPF nï¿½o cadastrado na base de Clientes, "
-                                    "faï¿½a o cadastro e entre em contato "
+                            message "CPF não cadastrado na base de Clientes, "
+                                    "faça o cadastro e entre em contato "
                                     "com o RH para alterar o tipo "
-                                    "para Funcionï¿½rio" view-as alert-box.
+                                    "para Funcionário" view-as alert-box.
                             undo.
                         end.
 
@@ -5390,7 +5390,7 @@ procedure fluxo-desconto. /* helio 18/03/2021 */
                             and tt-descfunc.tem_cadastro = yes
                             and tt-descfunc.tipo_funcionario = no
                         then do:
-                            message "CPF nï¿½o ï¿½ de um funcionï¿½rio."
+                            message "CPF nÃ£o Ã© de um funcionÃ¡rio."
                                         view-as alert-box.
                             undo.
                         end.

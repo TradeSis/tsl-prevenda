@@ -162,7 +162,7 @@ then do:
                     clien.clicod = pclicod . 
                     clien.ciccgc = string(ttentrada.cpfCnpj). 
                     clien.clinom = string(ttentrada.nomeCliente). 
-                    clien.tippes = no. 
+                    clien.tippes = yes. 
                     clien.etbcad = setbcod. 
                     clien.dtnasc = ttentrada.dataNascimento. 
                     clien.fone = ttentrada.telefone.

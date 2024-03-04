@@ -65,10 +65,9 @@ input close.
 def var vpathhml as char.
 
 def var vhml as char format "x(78)" extent 5 initial
-    ["1-Versao de Producao (ATU=26/02/2024 Proj. Cad Rapido Cli)",
+    ["1-Versao de Producao (ATU=29/02/2024 555859 2 Gar)",
      "2-Homologacao Melhoria Venda Outra Loja (31/01/2024)",
      "3-Homologacao Melhoria Novo modelo TOKEN regional 538865 (31/01/2024)",
-     "4-Homologacao Melhoria 555859 - Duas Garantias produtos iguais (ATU=08/02/2024)",
      ""].
 
 disp vhml with frame fhml
@@ -82,8 +81,6 @@ if frame-index = 2
 then vpathhml = "/usr/admcom/local/hml/VENDAO/,".
 if frame-index = 3 
 then vpathhml = "/usr/admcom/local/hml/538865/,".
-if frame-index = 4 
-then vpathhml = "/usr/admcom/local/hml/555859/,".
 
 hide frame fhml no-pause.
 propath = vpathhml + "/usr/admcom/local/,/usr/admcom/local/base/," + vpropath.
