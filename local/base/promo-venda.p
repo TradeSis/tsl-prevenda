@@ -2327,7 +2327,7 @@ procedure p-casadinha:
                         dctpromoc.produtovendacasada > 0
                         no-lock no-error.
             if avail dctpromoc  
-                    and (vbr-ok = no or ctpromoc.promocod = 49) 
+                    /*and (vbr-ok = no or ctpromoc.promocod = 49)*/ 
             then do:
                 
                 if  valt-movpc and
