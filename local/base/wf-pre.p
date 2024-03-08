@@ -1925,18 +1925,19 @@ repeat with centered row 3 side-label width 80 1 down
                 /*
                 run promo-cliente-novo.
                 */
+                /*
                 for each wf-movim no-lock,
                     first produ where recid(produ) = wf-movim.wrec
                             no-lock by produ.procod:
                     create twf-movim.
                     buffer-copy wf-movim to twf-movim.
                 end.    
-                for each wf-movim: delete wf-movim. end. 
+                *for each wf-movim: delete wf-movim. end. 
                 for each twf-movim:
                     create wf-movim.
                     buffer-copy twf-movim to wf-movim.
                 end.
-                    
+                */    
                 def var v-verchip as log init no.
                 def var v-qtdchip as int.
                 def var v-verchip2 as log init no.
