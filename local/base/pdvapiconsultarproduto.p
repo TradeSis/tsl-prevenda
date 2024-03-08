@@ -16,6 +16,7 @@ def shared var vapiconsultarproduto as log format "Ligado/Desligado".
 def var phttp_code as int.
 
 def var vdec as dec.
+def var vint as int.
 def var vdate as date.
 
 def buffer atu-produ for produ.
@@ -338,7 +339,21 @@ then do:
                         atu-estoq.datexp    = today.
                  end.
                     
-            
+                vint = int(ttprodutoloja.cst) no-error.
+                if vint <> ? and vint <> atu-estoq.cst
+                then do: 
+                    atu-estoq.cst  = vint.
+                    atu-estoq.datexp    = today.
+                end.    
+                vdec = int(ttprodutoloja.aliquotaicms) no-error.
+                if vdec <> ? and vdec <> atu-estoq.aliquotaicms
+                then do: 
+                    atu-estoq.aliquotaicms  = vdec.
+                    atu-estoq.datexp    = today.
+                end.    
+
+
+
         end.
         /* helio 02082023 */
         if ttprodutoloja.tempoGarantia <> ? and ttprodutoloja.tempoGarantia <> ""

@@ -34,6 +34,7 @@ def var num_pedido as int.
 def var vprotot   as dec.
 def var vservico  as char.
 def var valiquota as dec.
+def var vcst     as int.
 def var vmovpc    like movim.movpc.
 def var vmovdes   like movim.movdes.
 def var vtempogar as int.
@@ -275,38 +276,46 @@ for each movim where movim.etbcod = plani.etbcod
     valiquota = produ.proipiper.
 
     find xestab where xestab.etbcod = plani.etbcod no-lock.
-    
-    if valiquota = 99 
-    then do:
-        assign vsittributaria = "F"
-               vmovalicms = 0. 
-    end.
-    else do:
-        assign vsittributaria = "T"
-               vmovalicms = valiquota.
-
-        /* helio 20122021 mudanca aliquota icms 2022 */       
-        if xestab.ufecod = "RS" 
+   
+    /* Helio 04032024 estoq.cst e estoq.aliquotaicms */
+    find estoq where estoq.procod = produ.procod and estoq.etbcod = xestab.etbcod no-lock no-error.
+    if not avail estoq
+    then do:    
+        /* Versao antiga */
+        if valiquota = 99 
         then do:
-            if today >= 01/01/2022 or setbcod = 188
-            then vmovalicms = 17.
+            assign vsittributaria = "F"
+                   vmovalicms = 0. 
+        end.
+        else do:
+            assign vsittributaria = "T"
+                   vmovalicms = valiquota. 
+                   vmovalicms = 17.
         end.        
-        /**/
-
         if xestab.ufecod = "SC"  
         then do:
             valiquota = 17.
             vmovalicms = valiquota. /* helio 13/04/2022 a pedido milena */
-            /*run aliquotaicms.p (produ.procod, 0, xestab.ufecod, xestab.ufecod, output valiquota).*/
         end.    
-        
-        /* helio 23022023 Projeto Alteração Alíquota de ICMS PR - Volmir */
         if xestab.ufecod = "PR"  
         then do:
             valiquota = 19.
             vmovalicms = valiquota. /* helio 13/04/2022 a pedido milena */
         end.    
-        
+        /* fim versao antiga */
+    end.
+    else do:
+        /* Versao nova, pega dados cst e aliquotaicms de estoq */
+        valiquota   = estoq.aliquotaicms.
+        vcst        = estoq.cst.
+        if vcst = 60 then do:
+            vmovalicms      = 0.
+            vsittributaria  = "F".
+        end.    
+        else do:
+            vsittributaria  = "T".
+            vmovalicms      = valiquota.
+        end.
         
     end.
     
