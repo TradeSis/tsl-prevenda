@@ -68,7 +68,7 @@ def var vhml as char format "x(78)" extent 5 initial
     ["1-Versao de Producao (ATU=08/03/2024 Proj Icms)",
      "2-Homologacao Melhoria Venda Outra Loja (31/01/2024)",
      "3-Homologacao Melhoria Novo modelo TOKEN regional 538865 (31/01/2024)",
-     "",
+     "4-Homologacao Corretiva F4 Muda Preco garantia (12/03/2024)",
      "5-Homologacao M. 591058 PIX Plano 990 04/03/2024"]. 
 
 disp vhml with frame fhml
@@ -83,7 +83,7 @@ then vpathhml = "/usr/admcom/local/hml/VENDAO/,".
 if frame-index = 3 
 then vpathhml = "/usr/admcom/local/hml/538865/,".
 if frame-index = 4 
-then return.
+then vpathhml = "/usr/admcom/local/hml/20240312/,".
 if frame-index = 5 
 then vpathhml = "/usr/admcom/local/hml/591058/,".
 

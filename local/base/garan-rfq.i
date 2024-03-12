@@ -119,7 +119,8 @@ procedure inclusao-segprod.
         wf-movim.movpc  = wf-movim.movpc + btt-segprodu.prvenda.
             
         tt-seg-movim.recid-wf-movim = recid(wf-movim).
-        
+        /* helio 12/03/2024 - usando um campo do tempo */
+        wf-movim.KITproagr  =   par-procod.
     end.
     else do:
     
@@ -223,7 +224,8 @@ procedure altera-segprod.
         then do.
             find bseg-produ where bseg-produ.procod = tt-segprodu.seg-procod
                             no-lock.
-            find first wf-movim where wf-movim.wrec = recid(bseg-produ).
+            find first wf-movim where wf-movim.wrec = recid(bseg-produ) and
+                                      wf-movim.kitproagr = tt-seg-movim.procod  .
             wf-movim.movpc = wf-movim.movpc
                              - tt-seg-movim.movpc
                              + tt-segprodu.prvenda.

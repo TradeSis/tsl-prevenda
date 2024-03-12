@@ -101,7 +101,7 @@ end.
                         end.
 
                         /*
-                        run p-atu-frame.
+                        *run p-atu-frame.
                         */
                     end.
                 end.
@@ -116,8 +116,10 @@ do on error undo, retry  on endkey undo, leave with frame f-desti:
         if keyfunction(lastkey) = "end-error"
         then do:  
             clear frame f-desti all no-pause.
+            
             for each ant-movim no-lock:
                 find first wf-movim where wf-movim.wrec = ant-movim.wrec
+                        and wf-movim.KITproagr = ant-movim.KITproagr
                    no-error.
                 if avail wf-movim
                 then do:
@@ -166,8 +168,11 @@ do on error undo, retry  on endkey undo, leave with frame f-desti:
                                            output vsegtipo,
                                            output vsegprest,
                                            output vsegvalor).
-                    run p-atu-frame.
+                    /*
+                    *run p-atu-frame.
+                    */
                     run gercpg.
+                    
                     display ventra at 20 label "Entrada" 
                             /*vparce + vsegprest @*/ vparce at 20 label "Parcela"  
                             with frame f-condi row 20  /*19*/
@@ -202,11 +207,11 @@ do on error undo, retry  on endkey undo, leave with frame f-desti:
                             run tcupomb2b.p (input vclicod). 
                             if vcupomb2b = 0
                             then undo.
-                            else  run p-atu-frame.
                         end.
                     end.
                 end.
 
+        run p-atu-frame.
         if vmoecod = ""
         then do:
             find finan where finan.fincod = vfincod no-lock no-error.
@@ -217,7 +222,6 @@ do on error undo, retry  on endkey undo, leave with frame f-desti:
             vplano-ori = vfincod.
             
             vplanocota = 0.
-            
             update vfincod 
                 help "F7 Pesquisa"
                 go-on (C c F7 f7) 
@@ -413,8 +417,10 @@ do on error undo, retry  on endkey undo, leave with frame f-desti:
                                            output vsegtipo,
                                            output vsegprest,
                                            output vsegvalor).
-                    run p-atu-frame.
-
+            /*HELIO 1203
+            *run p-atu-frame.
+            */
+            
             parametro-in = "LIBERA-PLANO=S|CASADINHA=S|GERA-CPG=S|"
                         + "PLANO=" + string(finan.fincod) + "|"
                         + "ALTERA-PRECO=S|".
@@ -464,10 +470,10 @@ do on error undo, retry  on endkey undo, leave with frame f-desti:
 
             /*** preço especial ****/
             
-            run p-atu-frame. 
-
-            run ver-promocao.
-            
+            /*HELIO 1203
+            *run p-atu-frame. 
+            *run ver-promocao.
+            */            
 
 
             parametro-in = "PRECO-ESPECIAL=S|PRODUTO=|"
@@ -708,11 +714,11 @@ do on error undo, retry  on endkey undo, leave with frame f-desti:
             message "Plano Invalido (2)". 
             pause.
             for each ant-movim no-lock:
-                find first wf-movim where wf-movim.wrec = ant-movim.wrec no-error.
+                find first wf-movim where wf-movim.wrec = ant-movim.wrec and
+                                          wf-movim.KITproagr = ant-movim.KITproagr no-error.
                 if avail wf-movim
                 then buffer-copy ant-movim to wf-movim.
             end.
-            run p-atu-frame.
             undo, retry. 
         end.            
     end.
@@ -949,7 +955,8 @@ run gerpre.p (input recid(finan),
 if keyfunction(lastkey) = "END-ERROR"
 then do:
     for each ant-movim no-lock:
-        find first wf-movim where wf-movim.wrec = ant-movim.wrec
+        find first wf-movim where wf-movim.wrec = ant-movim.wrec and
+                                  wf-movim.KITproagr = ant-movim.KITproagr
                    no-error.
         if avail wf-movim
         then do:
