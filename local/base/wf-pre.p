@@ -539,7 +539,8 @@ repeat with centered row 3 side-label width 80 1 down
     
     if volta-preco = yes
     then  do:
-        run volta-preco.
+        run volta-preco. 
+        
         run p-atu-frame.
     end.
 
@@ -800,7 +801,9 @@ repeat with centered row 3 side-label width 80 1 down
                 wf-movim.movpc    = wf-movim.movpc + (wf-movim.desconto / wf-movim.movqtm). 
                 wf-movim.desconto = 0.
             end.
-            run p-atu-frame.
+            /* helio 12/03/2024
+            *run p-atu-frame.
+            */
             /*17.01.2020 verus - resgate cupomdesconto */
             
             /****verus
@@ -1916,6 +1919,7 @@ repeat with centered row 3 side-label width 80 1 down
                     end.
                         
                     else wf-movim.movqtm = wf-movim.movqtm - vqtd.
+
                 run p-atu-frame.
                 next.
             end.
@@ -2670,7 +2674,9 @@ repeat with centered row 3 side-label width 80 1 down
             if setbcod = 40 /*or setbcod = 42*/
             then do: 
                 run p-promo-f40.
-            end.
+            end. 
+            
+            /* Atualiza frame */
             run p-atu-frame.
         end.
         
@@ -3299,7 +3305,7 @@ end procedure.
 
 
 procedure volta-preco:
-    for each wf-movim :
+    for each wf-movim where wf-movim.movalicms <> 98 :
         find produ where recid(produ) = wf-movim.wrec no-lock no-error.
         if not avail produ then next.
         find estoq where estoq.etbcod = setbcod and
@@ -3782,7 +3788,6 @@ procedure p-atu-frame:
 
     hide frame f-exclusao no-pause.
     clear frame f-produ1 all no-pause.
-    
     def var xprocod as int.
     def var vpronom as char.    
     
@@ -4712,7 +4717,8 @@ procedure valpropromo:
                 end.
             end.
             if sresp = yes
-            then do:
+            then do: 
+            
                 run p-atu-frame.
                 sresp = no.
             end.

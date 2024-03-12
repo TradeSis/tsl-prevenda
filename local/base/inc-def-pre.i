@@ -82,7 +82,8 @@ def new shared temp-table ant-movim
     field desconto  like movim.movdes
     field movpc     like movim.movpc
     field precoori  like movim.movpc
-    field vencod    like func.funcod.
+    field vencod    like func.funcod
+    field KITproagr   like produ.procod.
 
 def var regua1      as char format "x(10)" extent 7
     initial ["Pre-Venda","Parcelas","","",
